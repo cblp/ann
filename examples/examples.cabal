@@ -5,8 +5,8 @@ version: 0
 
 build-type: Simple
 
-test-suite example-aeson
+test-suite examples
     build-depends: aeson, ann, ann-aeson, base, tasty, tasty-hunit
     default-language: Haskell2010
-    main-is: Aeson.hs
+    main-is: Main.hs
     type: exitcode-stdio-1.0

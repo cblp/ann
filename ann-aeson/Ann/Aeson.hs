@@ -14,8 +14,8 @@ import           Data.Traversable (for)
 import           GHC.TypeLits (Symbol)
 import           Language.Haskell.TH (Dec, Q, TyLit (StrTyLit),
                                       Type (AppT, ConT, LitT), conT, fieldPat,
-                                      infixApp, listE, nameBase, newName, recP,
-                                      stringE, varE, varP)
+                                      listE, nameBase, newName, recP, stringE,
+                                      varE, varP)
 import qualified Language.Haskell.TH as TH
 import           Language.Haskell.TH.Datatype (ConstructorInfo (..), ConstructorVariant (RecordConstructor),
                                                DatatypeInfo (..), reifyDatatype)
@@ -38,10 +38,10 @@ lookupName annotations =
     ]
 
 data Field = Field
-  { name        :: TH.Name
-  , varName     :: TH.Name
-  , annotations :: [Type]
-  , jsonName    :: String
+  { name     :: TH.Name
+  , varName  :: TH.Name
+  , jsonName :: String
+  , ignore   :: Bool
   }
 
 deriveToJson :: TH.Name -> Q [Dec]
@@ -56,31 +56,23 @@ deriveToJson recordName = do
     for (zip fieldNames constructorFields) $ \(name, type_) -> do
       varName <- newName $ nameBase name
       let annotations = typeAnnotations type_
-      let jsonName = fromMaybe (nameBase name) $ lookupName annotations
-      pure Field{name, varName, annotations, jsonName}
+      let jsonName    = fromMaybe (nameBase name) $ lookupName annotations
+      let ignore      = hasIgnore annotations
+      pure Field{name, varName, ignore, jsonName}
   let
     fieldsPat =
       recP
         constructorName
         [ fieldPat name $ varP varName
-        | Field{name, varName, annotations} <- fields
-        , not $ hasIgnore annotations
+        | Field{name, varName, ignore} <- fields, not ignore
         ]
   let
     fieldPairs =
       listE
-        [ infixApp
-            [| Text.pack $(stringE jsonName) |]
-            (varE '(.=))
-            (varE varName)
-        | Field{varName, annotations, jsonName} <- fields
-        , not $ hasIgnore annotations
+        [ [| Text.pack $(stringE jsonName) .= $(varE varName) |]
+        | Field{varName, ignore, jsonName} <- fields, not ignore
         ]
   [d|
     instance ToJSON $(conT recordName) where
       toJSON $fieldsPat = object $fieldPairs
     |]
-
--- [ AppT (ConT Ann.Show.Content) (LitT (StrTyLit "<function>"))
--- , ConT Ann.Aeson.Ignore
--- ]
