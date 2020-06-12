@@ -6,8 +6,7 @@
 module Ann.Show (Content, deriveShow) where
 
 import           Ann (Annotations, typeAnnotations)
-import           Data.Foldable (fold)
-import           Data.List (intersperse)
+import           Data.List (intercalate)
 import           Data.Maybe (listToMaybe)
 import           Data.Traversable (for)
 import           GHC.TypeLits (Symbol)
@@ -74,6 +73,3 @@ deriveShow recordName =
       |]
   where
     append x y = [| $x ++ $y |]
-
-intercalate :: Monoid m => m -> [m] -> m
-intercalate x xs = fold $ intersperse x xs
