@@ -19,7 +19,6 @@ import           Language.Haskell.TH (Dec, Q, TyLit (StrTyLit),
 import qualified Language.Haskell.TH as TH
 import           Language.Haskell.TH.Datatype (ConstructorInfo (..), ConstructorVariant (RecordConstructor),
                                                DatatypeInfo (..), reifyDatatype)
--- import           Language.Haskell.TH.Ppr (pprint)
 
 -- | Ignore field during encoding and decoding
 data Ignore
