@@ -1,0 +1,12 @@
+cabal-version: >= 1.10
+
+name: examples
+version: 0
+
+build-type: Simple
+
+test-suite example-aeson
+    build-depends: aeson, ann, ann-aeson, base, tasty, tasty-hunit
+    default-language: Haskell2010
+    main-is: Aeson.hs
+    type: exitcode-stdio-1.0

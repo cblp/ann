@@ -1,0 +1,6 @@
+resolver: lts-16.0
+
+packages:
+  - ann
+  - ann-aeson
+  - examples

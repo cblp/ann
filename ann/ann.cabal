@@ -1,0 +1,11 @@
+cabal-version: >= 1.10
+
+name: ann
+version: 0
+
+build-type: Simple
+
+library
+    build-depends: base, template-haskell
+    default-language: Haskell2010
+    exposed-modules: Ann Ann.Show
